@@ -4,11 +4,10 @@
 
 InvoiceFlow lets a merchant issue an ETH-denominated invoice to a specified customer wallet, receive an exact-value blockchain payment, independently reconcile its receipt, and withdraw merchant funds. The application uses Solidity, MetaMask / EIP-1193, ethers.js 6, Flask and SQLite.
 
-## Report and demonstration
+## Report and documentation
 
 - [8-page assignment report](docs/SC6113_InvoiceFlow_Report.pdf)
 - [Chinese usage and submission guide](docs/使用说明与提交清单.md)
-- [Dashboard screenshot](evidence/05-populated-dashboard.png)
 
 Validation: 29 contract checks, 19 backend checks and 13 browser checks passed on a local EVM. Actual MetaMask extension and Sepolia validation remain pending. GitHub stores this project; the Flask application requires a separate runtime and persistent storage to run online.
 
