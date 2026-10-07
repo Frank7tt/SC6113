@@ -1,0 +1,67 @@
+{
+  "network": "Local development EVM 31337",
+  "frames": 2311,
+  "fps": 5,
+  "chapters": [
+    {
+      "title": "01 / Purpose and scope",
+      "startFrame": 0,
+      "duration": 39
+    },
+    {
+      "title": "02 / System architecture",
+      "startFrame": 195,
+      "duration": 39
+    },
+    {
+      "title": "03 / Issue a customer-specific invoice",
+      "startFrame": 390,
+      "duration": 35
+    },
+    {
+      "title": "04 / Validate before submitting",
+      "startFrame": 566,
+      "duration": 34
+    },
+    {
+      "title": "05 / Commit and authenticate invoice metadata",
+      "startFrame": 736,
+      "duration": 38
+    },
+    {
+      "title": "06 / Execute a real payment",
+      "startFrame": 926,
+      "duration": 37
+    },
+    {
+      "title": "07 / Independently reconcile settlement",
+      "startFrame": 1111,
+      "duration": 37
+    },
+    {
+      "title": "08 / Withdraw merchant funds",
+      "startFrame": 1296,
+      "duration": 34
+    },
+    {
+      "title": "09 / Cancel an unpaid invoice",
+      "startFrame": 1466,
+      "duration": 35
+    },
+    {
+      "title": "10 / Testing and evaluation",
+      "startFrame": 1641,
+      "duration": 49
+    },
+    {
+      "title": "11 / Export and audit trail",
+      "startFrame": 1886,
+      "duration": 42
+    },
+    {
+      "title": "12 / Limitations and next verification",
+      "startFrame": 2096,
+      "duration": 43
+    }
+  ]
+}

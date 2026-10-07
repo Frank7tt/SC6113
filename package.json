@@ -1,0 +1,22 @@
+{
+  "name": "invoiceflow-sc6113",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compile": "node scripts/compile.mjs",
+    "chain": "node scripts/local-chain.mjs",
+    "test": "node tests/contract.mjs",
+    "deploy:local": "node scripts/deploy.mjs",
+    "deploy:sepolia": "node scripts/deploy.mjs --sepolia",
+    "test:backend": "python -m pytest tests/test_backend.py -v",
+    "test:ui": "node tests/ui.cjs"
+  },
+  "dependencies": {
+    "ethers": "6.13.5"
+  },
+  "devDependencies": {
+    "solc": "0.8.26",
+    "ganache": "7.9.2"
+  }
+}

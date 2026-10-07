@@ -1,0 +1,14 @@
+node_modules/
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+.secret-key
+data/*.db*
+deployment.json
+
+# Demonstration video stays local
+docs/InvoiceFlow_Demonstration.mp4
+
+# Keep database files local
+data/*.sqlite3*

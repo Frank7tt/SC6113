@@ -1,0 +1,40 @@
+bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)
+This version of µWS is not compatible with your Node.js build:
+
+Error: Cannot find module '../binaries/uws_darwin_arm64_137.node'
+Require stack:
+- /Users/qipeilin/Documents/Codex/2026-10-07/zheg/outputs/InvoiceFlow/node_modules/.pnpm/@trufflesuite+uws-js-unofficial@20.30.0-unofficial.0/node_modules/@trufflesuite/uws-js-unofficial/src/uws.js
+- /Users/qipeilin/Documents/Codex/2026-10-07/zheg/outputs/InvoiceFlow/node_modules/.pnpm/ganache@7.9.2/node_modules/ganache/dist/node/core.js
+Falling back to a NodeJS implementation; performance may be degraded.
+
+
+PASS Deployment assigns administrator and zero liability
+PASS Create invoice stores exact immutable fields and emits event
+PASS Duplicate merchant reference rejected
+PASS Same reference permitted for a different merchant
+PASS Zero payer rejected
+PASS Self payment rejected at creation
+PASS Zero amount rejected
+PASS Past due date rejected
+PASS Empty reference hash rejected
+PASS Empty document hash rejected
+PASS Unspecified payer cannot pay
+PASS Underpayment rejected
+PASS Overpayment rejected
+PASS Actual reverted payment receipt cannot alter state or credit
+PASS Exact payment credits merchant and records actual ETH
+PASS Duplicate payment rejected
+PASS Paid invoice cannot be cancelled
+PASS Administrator cannot withdraw another merchant credit
+PASS Pause requires administrator
+PASS Pause blocks invoice creation and payments
+PASS Withdraw works while paused and clears liability
+PASS Repeat withdrawal rejected
+PASS Only issuing merchant can cancel
+PASS Cancellation prevents subsequent payment
+PASS Unknown invoice payment rejected
+PASS Expired invoice payment rejected at blockchain time
+PASS Rejected withdrawal preserves credit and liability atomically
+PASS Reentrant receiver cannot double withdraw
+PASS Liability invariant across 12 deterministic multi-merchant payments
+29/29 tests passed. Gas: {"deployment":714039,"createInvoice":140057,"payInvoice":82546,"withdraw":36031}

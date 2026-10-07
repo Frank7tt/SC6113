@@ -1,0 +1,12 @@
+{
+  "contract_tests": 29,
+  "backend_tests": 19,
+  "browser_tests": 13,
+  "total_passed": 61,
+  "report_pages": 8,
+  "video_seconds": 462.2,
+  "video_has_audio": true,
+  "video_has_captions": true,
+  "verification_scope": "Local Ganache EVM and isolated Chrome browser; EIP-1193 adapter plus wallet-rejection fixture. Real MetaMask extension and Sepolia not executed.",
+  "final_backend_security": "Server-side single-use nonce consumption protects old signed-cookie replay; malformed stored JSON fails integrity safely."
+}

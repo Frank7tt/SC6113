@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.14, pytest-8.3.5, pluggy-1.6.0 -- /Users/qipeilin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/qipeilin/Documents/Codex/2026-10-07/zheg/outputs/InvoiceFlow
+collecting ... collected 19 items
+
+tests/test_backend.py::test_dashboard_and_security_headers PASSED        [  5%]
+tests/test_backend.py::test_config_excludes_rpc_credentials PASSED       [ 10%]
+tests/test_backend.py::test_signature_authentication_and_nonce_replay PASSED [ 15%]
+tests/test_backend.py::test_invalid_signature_rejected PASSED            [ 21%]
+tests/test_backend.py::test_expired_challenge_rejected PASSED            [ 26%]
+tests/test_backend.py::test_unauthenticated_metadata_rejected PASSED     [ 31%]
+tests/test_backend.py::test_csrf_token_required PASSED                   [ 36%]
+tests/test_backend.py::test_nonissuer_cannot_attach_metadata PASSED      [ 42%]
+tests/test_backend.py::test_metadata_digest_matches_and_tampering_rejected PASSED [ 47%]
+tests/test_backend.py::test_database_tampering_detected_on_read PASSED   [ 52%]
+tests/test_backend.py::test_reconciliation_idempotency PASSED            [ 57%]
+tests/test_backend.py::test_confirmation_threshold_and_exact_settlement PASSED [ 63%]
+tests/test_backend.py::test_chain_rollback_rebuilds_index PASSED         [ 68%]
+tests/test_backend.py::test_csv_formula_injection_prevented PASSED       [ 73%]
+tests/test_backend.py::test_invalid_metadata_input PASSED                [ 78%]
+tests/test_backend.py::test_invalid_wallet_and_invoice_identifier PASSED [ 84%]
+tests/test_backend.py::test_no_client_payment_claim_endpoint PASSED      [ 89%]
+tests/test_backend.py::test_wrong_rpc_chain_fails_closed PASSED          [ 94%]
+tests/test_backend.py::test_unicode_canonicalization PASSED              [100%]
+
+- generated xml file: /Users/qipeilin/Documents/Codex/2026-10-07/zheg/outputs/InvoiceFlow/evidence/backend-tests.xml -
+============================== 19 passed in 1.80s ==============================

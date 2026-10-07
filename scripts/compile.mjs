@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import solc from 'solc';
+const names=['InvoiceLedger.sol','TestReceivers.sol'];
+const sources=Object.fromEntries(names.map(n=>[n,{content:fs.readFileSync(`contracts/${n}`,'utf8')} ]));
+const input={language:'Solidity',sources,settings:{optimizer:{enabled:true,runs:200},evmVersion:'shanghai',outputSelection:{'*':{'*':['abi','evm.bytecode.object','evm.deployedBytecode.object']}}}};
+const output=JSON.parse(solc.compile(JSON.stringify(input)));
+for(const err of output.errors||[]) console.error(err.formattedMessage);
+if((output.errors||[]).some(e=>e.severity==='error')) process.exit(1);
+fs.mkdirSync('artifacts',{recursive:true});
+for(const [source,contracts] of Object.entries(output.contracts)) for(const [name,c] of Object.entries(contracts)) fs.writeFileSync(`artifacts/${name}.json`,JSON.stringify({contractName:name,source,compiler:solc.version(),settings:input.settings,abi:c.abi,bytecode:'0x'+c.evm.bytecode.object,deployedBytecode:'0x'+c.evm.deployedBytecode.object},null,2));
+fs.mkdirSync('static/vendor',{recursive:true});
+fs.copyFileSync('node_modules/ethers/dist/ethers.umd.min.js','static/vendor/ethers.umd.min.js');
+fs.copyFileSync('node_modules/ethers/LICENSE.md','static/vendor/ethers-LICENSE.md');
+console.log('Compiled Solidity 0.8.26, optimizer 200, Shanghai EVM. Vendored ethers.js.');

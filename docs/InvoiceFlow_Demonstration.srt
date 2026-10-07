@@ -1,0 +1,291 @@
+1
+00:00:00,000 --> 00:00:07,307
+This is InvoiceFlow, an enterprise invoice payment and reconciliation application for the SC6113 individual assignment.
+
+2
+00:00:07,307 --> 00:00:18,025
+Small businesses need to know which customer paid which invoice, whether the amount is correct, and whether the payment is actually confirmed.
+
+3
+00:00:18,025 --> 00:00:24,846
+InvoiceFlow connects those business questions to a smart contract and an independently verified ledger.
+
+4
+00:00:24,846 --> 00:00:31,666
+This demonstration uses a local Ethereum compatible blockchain, public development wallets, and test Ether.
+
+5
+00:00:31,666 --> 00:00:38,000
+It does not claim a live Sepolia deployment or a tested MetaMask extension.
+
+6
+00:00:39,000 --> 00:00:44,700
+The interface is built with HTML, CSS, JavaScript, and ethers version six.
+
+7
+00:00:44,700 --> 00:00:51,350
+The Solidity contract stores the issuer, customer, amount, due time, status, and document hash.
+
+8
+00:00:51,350 --> 00:00:59,900
+Flask serves the interface, authenticates issuer signatures, stores invoice descriptions in SQLite, and reads the blockchain for reconciliation.
+
+9
+00:00:59,900 --> 00:01:03,700
+The browser signs transactions through a wallet provider.
+
+10
+00:01:03,700 --> 00:01:12,250
+The backend never holds a customer private key and never treats a client supplied paid flag as proof.
+
+11
+00:01:12,250 --> 00:01:17,000
+The network and contract address are visible in the workspace.
+
+12
+00:01:18,000 --> 00:01:22,452
+I select the merchant development wallet and create a new invoice.
+
+13
+00:01:22,452 --> 00:01:26,095
+The reference identifies the invoice within this merchant's account.
+
+14
+00:01:26,095 --> 00:01:31,357
+Another merchant may use the same reference, but this merchant cannot reuse it.
+
+15
+00:01:31,357 --> 00:01:37,833
+I enter a consulting description, the customer's wallet, an Ether amount, and a future due time.
+
+16
+00:01:37,833 --> 00:01:41,476
+The merchant wallet is taken from the transaction sender.
+
+17
+00:01:41,476 --> 00:01:46,738
+The fixed customer wallet prevents an unrelated account from claiming this invoice payment.
+
+18
+00:01:46,738 --> 00:01:51,999
+Descriptions remain off chain, while their content commitment is stored in the contract.
+
+19
+00:01:53,000 --> 00:01:55,385
+First I enter a zero amount.
+
+20
+00:01:55,385 --> 00:02:01,746
+The interface rejects it before a transaction is submitted and explains how to correct the input.
+
+21
+00:02:01,746 --> 00:02:05,325
+This is a usability check, not the security boundary.
+
+22
+00:02:05,325 --> 00:02:16,457
+A caller can bypass a web form, so the smart contract also rejects a zero amount, a zero address, self payment, an invalid due time, or empty hashes.
+
+23
+00:02:16,457 --> 00:02:21,228
+Monetary values are converted to integer wei rather than floating point numbers.
+
+24
+00:02:21,228 --> 00:02:26,000
+I now correct the amount to zero point zero one five Ether.
+
+25
+00:02:27,000 --> 00:02:32,349
+Creating the invoice requires an issuer login signature and a blockchain transaction.
+
+26
+00:02:32,349 --> 00:02:39,481
+The authentication message includes the origin, chain, a single use nonce, and a five minute expiry.
+
+27
+00:02:39,481 --> 00:02:43,493
+It authorizes metadata editing, not a transfer of funds.
+
+28
+00:02:43,493 --> 00:02:52,409
+After the receipt succeeds, Flask verifies that the signed issuer and canonical metadata match the chain before storing the description.
+
+29
+00:02:52,409 --> 00:02:55,530
+The ledger displays a verified integrity indicator.
+
+30
+00:02:55,530 --> 00:03:04,000
+If upload fails after creation, the browser keeps a recovery copy rather than pretending the chain transaction was undone.
+
+31
+00:03:05,000 --> 00:03:08,073
+I switch to the customer development wallet.
+
+32
+00:03:08,073 --> 00:03:13,341
+The application shows the payment action for invoices payable by this account.
+
+33
+00:03:13,341 --> 00:03:15,536
+I pay the selected invoice.
+
+34
+00:03:15,536 --> 00:03:22,121
+The contract checks that it is open, not expired, and called by the designated customer.
+
+35
+00:03:22,121 --> 00:03:26,073
+The transferred value must equal the invoice amount exactly.
+
+36
+00:03:26,073 --> 00:03:28,707
+Underpayment, overpayment, and repeated payment revert.
+
+37
+00:03:28,707 --> 00:03:33,536
+On success, the invoice becomes paid and the merchant's credit increases.
+
+38
+00:03:33,536 --> 00:03:41,000
+These are actual transactions on the local virtual machine, not simulated paid labels in the web interface.
+
+39
+00:03:42,000 --> 00:03:43,694
+Next I run reconciliation.
+
+40
+00:03:43,694 --> 00:03:51,317
+Flask reads events from the configured contract and compares the payment with the stored invoice amount and merchant.
+
+41
+00:03:51,317 --> 00:03:59,364
+Events are unique by network scope, transaction hash, and log index, so running reconciliation twice does not duplicate them.
+
+42
+00:03:59,364 --> 00:04:04,023
+The local policy requires one confirmation; the Sepolia configuration requires three.
+
+43
+00:04:04,023 --> 00:04:07,835
+A payment below the threshold is shown as confirming.
+
+44
+00:04:07,835 --> 00:04:18,000
+The server pins its reads to one block and detects checkpoint hash changes so an indexed payment can be removed after a chain rollback.
+
+45
+00:04:19,000 --> 00:04:21,887
+Payment settlement creates a withdrawable merchant credit.
+
+46
+00:04:21,887 --> 00:04:25,599
+I return to the merchant wallet and withdraw it.
+
+47
+00:04:25,599 --> 00:04:33,024
+The contract checks the credit, clears it, reduces total liability, and only then transfers Ether to the merchant.
+
+48
+00:04:33,024 --> 00:04:35,500
+A reentrancy lock provides another guard.
+
+49
+00:04:35,500 --> 00:04:41,687
+If the receiving contract rejects Ether, the transaction reverts and the merchant's credit is preserved.
+
+50
+00:04:41,687 --> 00:04:45,399
+The administrator has no function to divert these funds.
+
+51
+00:04:45,399 --> 00:04:52,000
+The payment history remains visible after withdrawal because withdrawing revenue does not undo the paid invoice.
+
+52
+00:04:53,000 --> 00:04:57,675
+I also create a second invoice for a cancelled service request.
+
+53
+00:04:57,675 --> 00:05:01,925
+The issuing merchant can cancel it while it is open.
+
+54
+00:05:01,925 --> 00:05:09,150
+After cancellation, a customer cannot pay it and the original reference cannot be reused by that merchant.
+
+55
+00:05:09,150 --> 00:05:13,400
+Paid invoices cannot be cancelled under this prototype's business rules.
+
+56
+00:05:13,400 --> 00:05:19,350
+Overdue status is computed from blockchain time and payments after the due date fail.
+
+57
+00:05:19,350 --> 00:05:27,000
+This project deliberately excludes refunds, invoice amendments, tax calculations, and disputes, so these rules stay explicit and testable.
+
+58
+00:05:28,000 --> 00:05:36,727
+The evidence includes twenty nine passing contract tests, nineteen backend integration tests, and thirteen browser checks.
+
+59
+00:05:36,727 --> 00:05:49,818
+Contract tests include an actual reverted payment receipt, failed withdrawal rollback, a malicious reentrant receiver, and a liability invariant across twelve multi merchant payments.
+
+60
+00:05:49,818 --> 00:05:59,636
+Backend tests cover signature replay, expiry, unauthorized metadata changes, tampering, confirmation thresholds, chain rollback, and safe CSV export.
+
+61
+00:05:59,636 --> 00:06:07,272
+Browser checks execute invoice creation, payment, withdrawal, cancellation, filters, and a mobile overflow check.
+
+62
+00:06:07,272 --> 00:06:16,000
+The tested wallet rejection is an injected provider fixture, not a claim about the MetaMask extension.
+
+63
+00:06:17,000 --> 00:06:27,611
+The reconciliation CSV links invoice references to merchant and customer wallets, Ether amounts, settlement status, payment hashes, confirmation counts, and integrity results.
+
+64
+00:06:27,611 --> 00:06:34,364
+This makes the prototype useful for accounts receivable review rather than just transferring cryptocurrency.
+
+65
+00:06:34,364 --> 00:06:40,152
+Merchant supplied references that look like spreadsheet formulas are escaped during export.
+
+66
+00:06:40,152 --> 00:06:44,011
+The responsive interface supports desktop and mobile layouts.
+
+67
+00:06:44,011 --> 00:06:58,000
+The history identifies payment and withdrawal as separate events, and the details view exposes the immutable document hash so a reviewer can follow the record back to its contract.
+
+68
+00:06:59,000 --> 00:07:05,702
+InvoiceFlow demonstrates a complete invoice settlement and reconciliation workflow, but it is a coursework prototype.
+
+69
+00:07:05,702 --> 00:07:14,191
+Ether prices fluctuate, the public chain reveals wallet relationships, and hashing low entropy invoice data does not guarantee privacy.
+
+70
+00:07:14,191 --> 00:07:20,893
+The backend uses a single process SQLite index and is intended for a small dataset.
+
+71
+00:07:20,893 --> 00:07:26,255
+It is not a production accounting system or an audited payment service.
+
+72
+00:07:26,255 --> 00:07:36,978
+The remaining deployment step is to use dedicated test wallets on Sepolia, verify the actual MetaMask dialogs, and save those transaction hashes and screenshots.
+
+73
+00:07:36,978 --> 00:07:40,999
+Thank you for reviewing the implementation and its evidence.

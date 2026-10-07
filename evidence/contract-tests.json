@@ -1,0 +1,131 @@
+{
+  "environment": "Isolated Ganache local EVM, chain 31337; no Sepolia deployment implied",
+  "compiler": "0.8.26",
+  "timestamp": "2026-10-07T13:11:29.220Z",
+  "passed": 29,
+  "total": 29,
+  "gas": {
+    "deployment": 714039,
+    "createInvoice": 140057,
+    "payInvoice": 82546,
+    "withdraw": 36031
+  },
+  "tests": [
+    {
+      "name": "Deployment assigns administrator and zero liability",
+      "passed": true
+    },
+    {
+      "name": "Create invoice stores exact immutable fields and emits event",
+      "passed": true
+    },
+    {
+      "name": "Duplicate merchant reference rejected",
+      "passed": true
+    },
+    {
+      "name": "Same reference permitted for a different merchant",
+      "passed": true
+    },
+    {
+      "name": "Zero payer rejected",
+      "passed": true
+    },
+    {
+      "name": "Self payment rejected at creation",
+      "passed": true
+    },
+    {
+      "name": "Zero amount rejected",
+      "passed": true
+    },
+    {
+      "name": "Past due date rejected",
+      "passed": true
+    },
+    {
+      "name": "Empty reference hash rejected",
+      "passed": true
+    },
+    {
+      "name": "Empty document hash rejected",
+      "passed": true
+    },
+    {
+      "name": "Unspecified payer cannot pay",
+      "passed": true
+    },
+    {
+      "name": "Underpayment rejected",
+      "passed": true
+    },
+    {
+      "name": "Overpayment rejected",
+      "passed": true
+    },
+    {
+      "name": "Actual reverted payment receipt cannot alter state or credit",
+      "passed": true
+    },
+    {
+      "name": "Exact payment credits merchant and records actual ETH",
+      "passed": true
+    },
+    {
+      "name": "Duplicate payment rejected",
+      "passed": true
+    },
+    {
+      "name": "Paid invoice cannot be cancelled",
+      "passed": true
+    },
+    {
+      "name": "Administrator cannot withdraw another merchant credit",
+      "passed": true
+    },
+    {
+      "name": "Pause requires administrator",
+      "passed": true
+    },
+    {
+      "name": "Pause blocks invoice creation and payments",
+      "passed": true
+    },
+    {
+      "name": "Withdraw works while paused and clears liability",
+      "passed": true
+    },
+    {
+      "name": "Repeat withdrawal rejected",
+      "passed": true
+    },
+    {
+      "name": "Only issuing merchant can cancel",
+      "passed": true
+    },
+    {
+      "name": "Cancellation prevents subsequent payment",
+      "passed": true
+    },
+    {
+      "name": "Unknown invoice payment rejected",
+      "passed": true
+    },
+    {
+      "name": "Expired invoice payment rejected at blockchain time",
+      "passed": true
+    },
+    {
+      "name": "Rejected withdrawal preserves credit and liability atomically",
+      "passed": true
+    },
+    {
+      "name": "Reentrant receiver cannot double withdraw",
+      "passed": true
+    },
+    {
+      "name": "Liability invariant across 12 deterministic multi-merchant payments",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "environment": "localhost Flask development server, Ganache 31337; sequential warm read requests; not Sepolia latency",
+  "samples": 20,
+  "invoices": 3,
+  "p50_ms": 27.56,
+  "p95_ms": 51.32,
+  "minimum_ms": 24.86,
+  "maximum_ms": 79.49,
+  "raw_ms": [
+    51.32,
+    27.57,
+    27.19,
+    27.17,
+    29.87,
+    32.98,
+    26.38,
+    27.72,
+    27.24,
+    26.89,
+    26.87,
+    27.6,
+    31.47,
+    79.49,
+    24.86,
+    27.55,
+    27.29,
+    30.72,
+    28.06,
+    27.34
+  ]
+}

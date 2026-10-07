@@ -1,0 +1,38 @@
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const customer='0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
+const results=[];
+const out=process.env.EVIDENCE_DIR||'evidence';fs.mkdirSync(out,{recursive:true});
+async function check(name,fn){try{await fn();results.push({name,passed:true});console.log('PASS',name);}catch(e){results.push({name,passed:false,error:e.message});throw e;}}
+(async()=>{
+ const browser=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})});
+ const context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true});
+ const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const suffix=Date.now().toString().slice(-7),ref=`INV-2026-${suffix}`;
+ await page.goto('http://127.0.0.1:5000');await page.waitForFunction(()=>document.getElementById('connectionState').textContent.includes('synchronized'));
+ await check('Missing wallet produces actionable feedback',async()=>{await page.click('#connectWallet');await page.waitForFunction(()=>document.getElementById('transactionMessage').textContent.includes('not detected'));await page.click('#dismissTransaction');});
+ await check('Local EIP-1193 wallet connects',async()=>{await page.click('#useLocal');await page.waitForFunction(()=>document.getElementById('walletAddress').textContent.includes('2266'));});
+ await page.click('#newInvoice');await page.fill('#reference',ref);await page.fill('#description','October consulting services - enterprise payment pilot');await page.fill('#payer',customer);await page.fill('#amount','0');
+ await check('Zero amount rejected before chain submission',async()=>{await page.click('#submitInvoice');await page.waitForFunction(()=>document.getElementById('formError').textContent.includes('greater than zero'));await page.screenshot({path:`${out}/02-validation.png`});});
+ await page.fill('#amount','0.0125');
+ await check('Invoice creation and authenticated metadata upload succeed',async()=>{await page.click('#submitInvoice');await page.waitForFunction(()=>!document.getElementById('invoiceDialog').open,{},{timeout:15000});await page.waitForSelector(`button[data-detail]:has-text("${ref}")`);const row=page.locator('tr').filter({hasText:ref});assert.ok((await row.innerText()).includes('Verified'));await page.click('#dismissTransaction');await page.screenshot({path:`${out}/03-invoice-created.png`,fullPage:true});});
+ await check('Customer payment produces a reconciled settlement',async()=>{await page.selectOption('#localRole','1');await page.waitForFunction(()=>document.getElementById('walletAddress').textContent.includes('79C8'));await page.locator('tr').filter({hasText:ref}).locator('[data-pay]').click();await page.waitForFunction(r=>[...document.querySelectorAll('tr')].some(t=>t.textContent.includes(r)&&t.textContent.includes('Settled')),ref,{timeout:15000});await page.click('#dismissTransaction');await page.screenshot({path:`${out}/04-payment-settled.png`,fullPage:true});});
+ await check('Repeated reconciliation does not duplicate events',async()=>{await page.click('#reconcile');await page.waitForFunction(()=>document.getElementById('reconciliationResult').textContent.includes('No duplicate'));const first=await page.locator('.event').count();await page.click('#reconcile');assert.equal(await page.locator('.event').count(),first);});
+ await check('Merchant withdrawal transfers balance and clears credit',async()=>{await page.selectOption('#localRole','0');await page.waitForFunction(()=>document.getElementById('walletAddress').textContent.includes('2266'));await page.click('#withdraw');await page.waitForFunction(()=>document.getElementById('credit').textContent==='0.0 ETH',{},{timeout:15000});await page.click('#dismissTransaction');});
+ const cancelRef=`INV-CANCEL-${suffix}`;
+ await page.click('#newInvoice');await page.fill('#reference',cancelRef);await page.fill('#description','Cancelled service request');await page.fill('#payer',customer);await page.fill('#amount','0.005');await page.click('#submitInvoice');await page.waitForFunction(()=>!document.getElementById('invoiceDialog').open,{},{timeout:15000});await page.click('#dismissTransaction');
+ await check('Merchant cancellation changes on-chain state',async()=>{await page.locator('tr').filter({hasText:cancelRef}).locator('[data-detail]').first().click();await page.click('[data-cancel]');await page.waitForFunction(r=>[...document.querySelectorAll('tr')].some(t=>t.textContent.includes(r)&&t.textContent.includes('Cancelled')),cancelRef,{timeout:15000});await page.click('#dismissTransaction');});
+ const openRef=`INV-OPEN-${suffix}`;
+ await page.click('#newInvoice');await page.fill('#reference',openRef);await page.fill('#description','Monthly support and maintenance');await page.fill('#payer',customer);await page.fill('#amount','0.02');await page.click('#submitInvoice');await page.waitForFunction(()=>!document.getElementById('invoiceDialog').open,{},{timeout:15000});await page.click('#dismissTransaction');
+ await check('CSV exports verified invoice records',async()=>{const [d]=await Promise.all([page.waitForEvent('download'),page.click('a[href="/api/export.csv"]')]);await d.saveAs(`${out}/reconciliation-export.csv`);assert.ok(fs.readFileSync(`${out}/reconciliation-export.csv`,'utf8').includes(ref));});
+ await check('Search and status filters select the expected invoice',async()=>{await page.fill('#search',openRef);assert.equal(await page.locator('#invoiceRows tr').count(),1);await page.selectOption('#statusFilter','Settled');assert.equal(await page.locator('#invoiceRows tr').count(),0);await page.fill('#search','');await page.selectOption('#statusFilter','all');});
+ await page.screenshot({path:`${out}/05-populated-dashboard.png`,fullPage:true});
+ await check('Mobile layout avoids page overflow',async()=>{await page.setViewportSize({width:390,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));await page.screenshot({path:`${out}/06-mobile.png`,fullPage:true});});
+ await check('No uncaught browser exceptions during business flow',async()=>assert.deepEqual(errors,[]));
+ const rejectedPage=await context.newPage();await rejectedPage.addInitScript(()=>{window.ethereum={request:async()=>{throw Object.assign(new Error('User rejected'),{code:4001});},on:()=>{}};});await rejectedPage.goto('http://127.0.0.1:5000');await rejectedPage.waitForFunction(()=>document.getElementById('connectionState').textContent.includes('synchronized'));
+ await check('Injected wallet rejection handled without an uncaught error',async()=>{await rejectedPage.click('#connectWallet');await rejectedPage.waitForFunction(()=>document.getElementById('transactionMessage').textContent.includes('declined'));});
+ await browser.close();
+ fs.writeFileSync(`${out}/ui-tests.json`,JSON.stringify({environment:'Headless Chrome; local EIP-1193 development adapter plus injected rejection fixture; actual MetaMask extension not tested',timestamp:new Date().toISOString(),passed:results.filter(r=>r.passed).length,total:results.length,tests:results},null,2));
+ console.log(`${results.length} browser checks passed`);
+})().catch(e=>{console.error(e);fs.writeFileSync(`${out}/ui-tests.json`,JSON.stringify({tests:results,error:e.message},null,2));process.exit(1)});

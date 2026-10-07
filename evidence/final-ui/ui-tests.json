@@ -1,0 +1,60 @@
+{
+  "environment": "Headless Chrome; local EIP-1193 development adapter plus injected rejection fixture; actual MetaMask extension not tested",
+  "timestamp": "2026-10-07T13:40:20.637Z",
+  "passed": 13,
+  "total": 13,
+  "tests": [
+    {
+      "name": "Missing wallet produces actionable feedback",
+      "passed": true
+    },
+    {
+      "name": "Local EIP-1193 wallet connects",
+      "passed": true
+    },
+    {
+      "name": "Zero amount rejected before chain submission",
+      "passed": true
+    },
+    {
+      "name": "Invoice creation and authenticated metadata upload succeed",
+      "passed": true
+    },
+    {
+      "name": "Customer payment produces a reconciled settlement",
+      "passed": true
+    },
+    {
+      "name": "Repeated reconciliation does not duplicate events",
+      "passed": true
+    },
+    {
+      "name": "Merchant withdrawal transfers balance and clears credit",
+      "passed": true
+    },
+    {
+      "name": "Merchant cancellation changes on-chain state",
+      "passed": true
+    },
+    {
+      "name": "CSV exports verified invoice records",
+      "passed": true
+    },
+    {
+      "name": "Search and status filters select the expected invoice",
+      "passed": true
+    },
+    {
+      "name": "Mobile layout avoids page overflow",
+      "passed": true
+    },
+    {
+      "name": "No uncaught browser exceptions during business flow",
+      "passed": true
+    },
+    {
+      "name": "Injected wallet rejection handled without an uncaught error",
+      "passed": true
+    }
+  ]
+}

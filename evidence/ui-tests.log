@@ -1,0 +1,14 @@
+PASS Missing wallet produces actionable feedback
+PASS Local EIP-1193 wallet connects
+PASS Zero amount rejected before chain submission
+PASS Invoice creation and authenticated metadata upload succeed
+PASS Customer payment produces a reconciled settlement
+PASS Repeated reconciliation does not duplicate events
+PASS Merchant withdrawal transfers balance and clears credit
+PASS Merchant cancellation changes on-chain state
+PASS CSV exports verified invoice records
+PASS Search and status filters select the expected invoice
+PASS Mobile layout avoids page overflow
+PASS No uncaught browser exceptions during business flow
+PASS Injected wallet rejection handled without an uncaught error
+13 browser checks passed
